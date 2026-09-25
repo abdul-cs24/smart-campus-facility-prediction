@@ -182,15 +182,25 @@ def generate_resolution_time(severity):
 def generate_photo():
     return random.choice(["Yes", "Yes", "Yes", "No"])
 
-def generate_date():
+def generate_datetime():
     start_date = datetime(2025, 1, 1)
     end_date = datetime(2026, 9, 1)
 
     days = (end_date - start_date).days
-
     random_days = random.randint(0, days)
 
-    return start_date + timedelta(days=random_days)
+    complaint_date = start_date + timedelta(days=random_days)
+
+    # Campus active hours: 8 AM to 8 PM
+    hour = random.randint(8, 19)
+    minute = random.randint(0, 59)
+
+    complaint_datetime = complaint_date.replace(
+        hour=hour,
+        minute=minute
+    )
+
+    return complaint_datetime
 
 
 
@@ -199,18 +209,89 @@ floor = random.choice(FLOORS)
 room = generate_room(floor)
 
 # user_type = random.choice(USER_TYPES)
-user_type = random.choices(
-    USER_TYPES,
-    weights=[90, 10],
-    k=1
-)[0]
+# user_type = random.choices(
+#     USER_TYPES,
+#     weights=[90, 10],
+#     k=1
+# )[0]
 
-facility = random.choice(FACILITIES)
-issue = random.choice(ISSUES[facility])
+# facility = random.choice(FACILITIES)
+# issue = random.choice(ISSUES[facility])
 
-print("User Type:", user_type)
-print("Block:", block)
-print("Floor:", floor)
-print("Room:", room)
-print("Facility:", facility)
-print("Issue:", issue)
+# print("User Type:", user_type)
+# print("Block:", block)
+# print("Floor:", floor)
+# print("Room:", room)
+# print("Facility:", facility)
+# print("Issue:", issue)
+
+
+
+
+data = []
+
+for i in range(10):
+
+    # 1. User
+    user_type = random.choices(
+        USER_TYPES,
+        weights=[90, 10],
+        k=1
+    )[0]
+
+    user_id = generate_user_id(user_type)
+
+    # 2. Location
+    block = random.choice(BLOCKS)
+    floor = random.choice(FLOORS)
+    room = generate_room(floor)
+
+    # 3. Facility and Issue
+    facility = random.choice(FACILITIES)
+    issue = random.choice(ISSUES[facility])
+
+    # 4. Campus usage
+    footfall = generate_footfall(facility)
+
+    # 5. Complaint history
+    previous_complaints = generate_previous_complaints()
+
+    # 6. Severity
+    severity = generate_severity(
+        issue,
+        footfall,
+        previous_complaints
+    )
+
+    # 7. Resolution time
+    resolution_time = generate_resolution_time(severity)
+
+    # 8. Photo
+    photo = generate_photo()
+
+    # 9. Date
+    complaint_datetime = generate_datetime()
+
+    # 10. Store complaint
+    data.append({
+        "Complaint_ID": f"CMP{i+1:05d}",
+        "User_Type": user_type,
+        "User_ID": user_id,
+        "Block_No": block,
+        "Floor": floor,
+        "Room_No": room,
+        "Facility_Type": facility,
+        "Issue_Type": issue,
+        "Complaint_Date": complaint_datetime.date(),
+        "Day_of_Week": complaint_datetime.strftime("%A"),
+        "Complaint_Time": complaint_datetime.strftime("%H:%M"),
+        "Footfall": footfall,
+        "Previous_Complaints": previous_complaints,
+        "Severity": severity,
+        "Resolution_Time_Hours": resolution_time,
+        "Photo_Available": photo
+    })
+
+df = pd.DataFrame(data)
+
+print(df.to_string(index=False))
