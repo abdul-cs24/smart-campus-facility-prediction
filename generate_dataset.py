@@ -105,6 +105,30 @@ ISSUES = {
     ]
 }
 
+HIGH_RISK_LOCATIONS = [
+    (12, 3, 305, "Washroom"),
+    (34, 5, 507, "Projector"),
+    (21, 2, 203, "Water Cooler"),
+    (8, 4, 404, "WiFi"),
+    (45, 1, 102, "Garbage"),
+    (17, 6, 605, "AC"),
+    (29, 3, 307, "Electrical"),
+    (40, 2, 204, "Lift")
+]
+
+HIGH_RISK_ISSUES = {
+    (12, 3, 305, "Washroom"): "Cleanliness",
+    (34, 5, 507, "Projector"): "No Display",
+    (21, 2, 203, "Water Cooler"): "No Water",
+    (8, 4, 404, "WiFi"): "Frequent Disconnection",
+    (45, 1, 102, "Garbage"): "Bin Overflow",
+    (17, 6, 605, "AC"): "Not Cooling",
+    (29, 3, 307, "Electrical"): "Power Failure",
+    (40, 2, 204, "Lift"): "Not Working"
+}
+
+
+
 facility = "Projector"
 
 issue = random.choice(ISSUES[facility])
@@ -140,8 +164,10 @@ def generate_footfall(facility):
     else:
         return random.randint(30, 150)
 
-def generate_previous_complaints():
-    return random.randint(0, 15)
+# def generate_previous_complaints():
+#     return random.randint(0, 15)
+
+
 
 def generate_severity(issue, footfall, previous_complaints):
 
@@ -202,11 +228,46 @@ def generate_datetime():
 
     return complaint_datetime
 
+def generate_location():
 
+    # 30% chance of selecting a recurring high-risk location
+    if random.random() < 0.30:
 
-block = random.choice(BLOCKS)
-floor = random.choice(FLOORS)
-room = generate_room(floor)
+        block, floor, room, facility = random.choice(
+            HIGH_RISK_LOCATIONS
+        )
+
+    else:
+
+        block = random.choice(BLOCKS)
+        floor = random.choice(FLOORS)
+        room = generate_room(floor)
+        facility = random.choice(FACILITIES)
+
+    return block, floor, room, facility
+
+def generate_issue(block, floor, room, facility):
+
+    location_key = (
+        block,
+        floor,
+        room,
+        facility
+    )
+
+    # High-risk location
+    if location_key in HIGH_RISK_ISSUES:
+
+        # 70% chance recurring issue repeats
+        if random.random() < 0.70:
+            return HIGH_RISK_ISSUES[location_key]
+
+    # Otherwise choose normal facility-specific issue
+    return random.choice(ISSUES[facility])
+
+# block = random.choice(BLOCKS)
+# floor = random.choice(FLOORS)
+# room = generate_room(floor)
 
 # user_type = random.choice(USER_TYPES)
 # user_type = random.choices(
@@ -216,7 +277,12 @@ room = generate_room(floor)
 # )[0]
 
 # facility = random.choice(FACILITIES)
-# issue = random.choice(ISSUES[facility])
+
+block, floor, room, facility = generate_location()
+
+
+
+issue = random.choice(ISSUES[facility])
 
 # print("User Type:", user_type)
 # print("Block:", block)
@@ -226,11 +292,13 @@ room = generate_room(floor)
 # print("Issue:", issue)
 
 
+complaint_history = {}
+
 
 
 data = []
 
-for i in range(10):
+for i in range(10000):
 
     # 1. User
     user_type = random.choices(
@@ -242,19 +310,45 @@ for i in range(10):
     user_id = generate_user_id(user_type)
 
     # 2. Location
-    block = random.choice(BLOCKS)
-    floor = random.choice(FLOORS)
-    room = generate_room(floor)
+    # block = random.choice(BLOCKS)
+    # floor = random.choice(FLOORS)
+    # room = generate_room(floor)
 
     # 3. Facility and Issue
-    facility = random.choice(FACILITIES)
-    issue = random.choice(ISSUES[facility])
+    # facility = random.choice(FACILITIES)
+
+    # 2. Location + Facility
+    block, floor, room, facility = generate_location()
+
+# 3. Issue
+
+    # issue = random.choice(ISSUES[facility])
+
+    issue = generate_issue(
+    block,
+    floor,
+    room,
+    facility
+)
+
+    location_key = (
+    block,
+    floor,
+    room,
+    facility
+)
+
 
     # 4. Campus usage
     footfall = generate_footfall(facility)
 
     # 5. Complaint history
-    previous_complaints = generate_previous_complaints()
+    # previous_complaints = generate_previous_complaints()
+
+    previous_complaints = complaint_history.get(
+    location_key,
+    0
+)
 
     # 6. Severity
     severity = generate_severity(
@@ -292,6 +386,91 @@ for i in range(10):
         "Photo_Available": photo
     })
 
+    complaint_history[location_key] = previous_complaints + 1
+
 df = pd.DataFrame(data)
 
-print(df.to_string(index=False))
+
+
+# Create complete datetime
+df["Complaint_DateTime"] = pd.to_datetime(
+    df["Complaint_Date"].astype(str)
+    + " "
+    + df["Complaint_Time"]
+)
+
+# Sort oldest to newest
+df = df.sort_values(
+    "Complaint_DateTime"
+).reset_index(drop=True)
+
+# Recalculate previous complaints chronologically
+df["Previous_Complaints"] = (
+    df.groupby(
+        ["Block_No", "Floor", "Room_No", "Facility_Type"]
+    )
+    .cumcount()
+)
+
+# Recalculate severity
+df["Severity"] = df.apply(
+    lambda row: generate_severity(
+        row["Issue_Type"],
+        row["Footfall"],
+        row["Previous_Complaints"]
+    ),
+    axis=1
+)
+
+# Recalculate resolution time
+df["Resolution_Time_Hours"] = df["Severity"].apply(
+    generate_resolution_time
+)
+
+# Recreate complaint IDs
+df["Complaint_ID"] = [
+    f"CMP{i+1:05d}"
+    for i in range(len(df))
+]
+
+# print(df.to_string(index=False))
+
+# print("\n--- Recurring Issues at High-Risk Locations ---")
+
+# for location in HIGH_RISK_LOCATIONS:
+
+#     block, floor, room, facility = location
+
+#     result = df[
+#         (df["Block_No"] == block) &
+#         (df["Floor"] == floor) &
+#         (df["Room_No"] == room) &
+#         (df["Facility_Type"] == facility)
+#     ]
+
+#     if len(result) > 0:
+
+#         print(
+#             f"\nBlock {block}, Floor {floor}, "
+#             f"Room {room}, {facility}"
+#         )
+
+#         print(result["Issue_Type"].value_counts())
+
+#convert data into csv file
+
+df.to_csv(
+    "smart_campus_facility_dataset.csv",
+    index=False
+)
+
+print("\nDataset created successfully!")
+print("Shape:", df.shape)
+print("\nFirst 5 rows:")
+print(df.head())
+
+print("\nSeverity Distribution:")
+print(df["Severity"].value_counts())
+
+print("\nFacility Distribution:")
+print(df["Facility_Type"].value_counts())
