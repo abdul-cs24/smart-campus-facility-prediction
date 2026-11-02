@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Smart Campus | Submit Complaint</title>
+
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <header class="topbar">
+        <div class="brand">
+            <div class="brand-icon">SC</div>
+            <div>
+                <h2>Smart Campus</h2>
+                <p>Facility Management System</p>
+            </div>
+        </div>
+
+        <nav>
+            <a href="/ui/">Submit Complaint</a>
+            <a href="/ui/dashboard.html"> 
+                Maintenance Dashboard</a>
+        </nav>
+    </header>
+
+
+    <main class="container">
+
+        <!-- Page Heading -->
+        <section class="hero">
+            <p class="eyebrow">SMART CAMPUS FACILITY SYSTEM</p>
+
+            <h1>Report a <span>Facility Issue</span></h1>
+
+            <p>
+                Submit your facility complaint. Our system will analyze
+                the complaint and help the maintenance team prioritize it.
+            </p>
+        </section>
+
+
+        <!-- Complaint Form -->
+        <section class="complaint-section">
+
+            <form id="complaintForm" class="panel">
+
+                <div class="panel-heading">
+
+                    <div>
+                        <h2>Complaint Details</h2>
+
+                        <p>
+                            Fill in the details of the facility issue.
+                        </p>
+                    </div>
+
+                    <span class="step-label">COMPLAINT FORM</span>
+
+                </div>
+
+
+                <div class="form-grid">
+
+                    <!-- User Type -->
+                    <label>
+                        User Type
+
+                        <select id="User_Type" required>
+                            <option value="Student">Student</option>
+                            <option value="Faculty">Faculty</option>
+                        </select>
+                    </label>
+
+
+                    <!-- User ID -->
+                    <label>
+                        Registration / Faculty ID
+
+                        <input
+                            id="User_ID"
+                            type="text"
+                            placeholder="Enter your ID"
+                            required
+                        >
+                    </label>
+
+
+                    <!-- Block -->
+                    <label>
+                        Block Number
+
+                        <input
+                            id="Block_No"
+                            type="number"
+                            min="1"
+                            max="50"
+                            placeholder="Example: 29"
+                            required
+                        >
+                    </label>
+
+
+                    <!-- Floor -->
+                    <label>
+                        Floor
+
+                        <input
+                            id="Floor"
+                            type="number"
+                            min="1"
+                            max="7"
+                            placeholder="Example: 3"
+                            required
+                        >
+                    </label>
+
+
+                    <!-- Room -->
+                    <label>
+                        Room Number
+
+                        <input
+                            id="Room_No"
+                            type="number"
+                            placeholder="Example: 307"
+                            required
+                        >
+                    </label>
+
+
+                    <!-- Facility -->
+                    <label>
+                        Facility Type
+
+                        <select id="Facility_Type" required>
+                            <option value="">Select Facility</option>
+                            <option value="Washroom">Washroom</option>
+                            <option value="Water Cooler">Water Cooler</option>
+                            <option value="Garbage">Garbage</option>
+                            <option value="Lighting">Lighting</option>
+                            <option value="Lift">Lift</option>
+                            <option value="AC">AC</option>
+                            <option value="WiFi">WiFi</option>
+                            <option value="Furniture">Furniture</option>
+                            <option value="Electrical">Electrical</option>
+                            <option value="Projector">Projector</option>
+                            <option value="Classroom">Classroom</option>
+                        </select>
+                    </label>
+
+
+                    <!-- Issue -->
+                    <label>
+                        Issue Type
+
+                        <input
+                            id="Issue_Type"
+                            type="text"
+                            placeholder="Example: Not Working"
+                            required
+                        >
+                    </label>
+
+
+                    <!-- Complaint Date -->
+                    <label>
+                        Complaint Date
+
+                        <input
+                            id="Complaint_Date"
+                            type="date"
+                            required
+                        >
+                    </label>
+
+
+                    <!-- Complaint Time -->
+                    <label>
+                        Complaint Time
+
+                        <input
+                            id="Complaint_Time"
+                            type="time"
+                            required
+                        >
+                    </label>
+
+
+                    <!-- Photo -->
+                    <label class="full-width">
+                        Upload Complaint Photo
+
+                        <input
+                            id="Photo"
+                            type="file"
+                            accept="image/*"
+                        >
+                    </label>
+
+                </div>
+
+
+                <button type="submit" id="submitButton">
+                    Submit Complaint <span>→</span>
+                </button>
+
+                <p class="form-note">
+                    Your complaint will be analyzed and forwarded
+                    to the maintenance team.
+                </p>
+
+            </form>
+
+
+            <!-- Result -->
+            <aside class="panel result-panel">
+
+                <p class="eyebrow">COMPLAINT STATUS</p>
+
+                <div class="result-icon">✓</div>
+
+                <h2>Submit Your Complaint</h2>
+
+                <p class="result-description">
+                    After submitting, the system will generate a complaint
+                    record and analyze its priority.
+                </p>
+
+
+                <div id="resultBox" class="result-box">
+
+                    <span class="result-label">
+                        COMPLAINT STATUS
+                    </span>
+
+                    <h3 id="severityValue">
+                        Awaiting submission
+                    </h3>
+
+                    <p id="resultMessage">
+                        Fill in the complaint details and submit the form.
+                    </p>
+
+                </div>
+
+
+                <div class="info-card">
+
+                    <h3>What happens next?</h3>
+
+                    <p>01. Your complaint is recorded in the system.</p>
+
+                    <p>02. Historical location data is analyzed.</p>
+
+                    <p>03. The maintenance team receives priority information.</p>
+
+                </div>
+
+                <p id="errorMessage" class="error-message"></p>
+
+            </aside>
+
+        </section>
+
+
+    </main>
+
+</body>
+</html>

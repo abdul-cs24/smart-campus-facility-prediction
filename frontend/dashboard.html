@@ -1,0 +1,205 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Smart Campus | Maintenance Dashboard</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <header class="topbar">
+
+        <div class="brand">
+            <div class="brand-icon">SC</div>
+
+            <div>
+                <h2>Smart Campus</h2>
+                <p>Facility Management System</p>
+            </div>
+        </div>
+
+        <nav>
+            <a href="/ui/">Submit Complaint</a>
+            <a href="/ui/dashboard.html">Maintenance Dashboard</a>
+        </nav>
+
+    </header>
+
+
+    <main class="container">
+
+        <!-- Dashboard Heading -->
+        <section class="hero">
+
+            <p class="eyebrow">
+                MAINTENANCE TEAM
+            </p>
+
+            <h1>
+                Facility <span>Management Dashboard</span>
+            </h1>
+
+            <p>
+                Monitor complaints, identify high-risk locations,
+                and prioritize maintenance resources.
+            </p>
+
+        </section>
+
+
+        <!-- Summary Cards -->
+        <section class="dashboard-cards">
+
+            <div class="stat-card">
+                <p>Total Complaints</p>
+                <h2 id="totalComplaints">0</h2>
+            </div>
+
+            <div class="stat-card">
+                <p>Pending Complaints</p>
+                <h2 id="pendingComplaints">0</h2>
+            </div>
+
+            <div class="stat-card alert-card">
+                <p>High Priority</p>
+                <h2 id="highPriority">0</h2>
+            </div>
+
+        </section>
+
+
+        <!-- High Risk Locations -->
+        <section class="panel dashboard-panel">
+
+            <div class="panel-heading">
+                <div>
+                    <h2>🚨 High-Risk Locations</h2>
+
+                    <p>
+                        Locations with recurring complaints
+                        and higher severity.
+                    </p>
+                </div>
+            </div>
+
+            <div id="riskLocations">
+                Loading high-risk locations...
+            </div>
+
+        </section>
+
+
+        <!-- Recent Complaints -->
+        <section class="panel dashboard-panel">
+            
+<!-- Complaint Search and Filters -->
+
+<div class="complaint-filters">
+
+    <input
+        type="text"
+        id="complaintSearch"
+        placeholder="Search by Complaint ID, Block, Room or Facility..."
+    >
+
+    <select id="statusFilter">
+        <option value="All">All Statuses</option>
+        <option value="Pending">Pending</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Resolved">Resolved</option>
+    </select>
+
+    <select id="severityFilter">
+        <option value="All">All Severities</option>
+        <option value="Low">Low</option>
+        <option value="Medium">Medium</option>
+        <option value="High">High</option>
+        <option value="Critical">Critical</option>
+    </select>
+
+</div>
+
+            <div class="panel-heading">
+                <div>
+                    <h2>📋 Recent Complaints</h2>
+
+                    <p>
+                        Monitor complaints and update maintenance status.
+                    </p>
+                </div>
+            </div>
+
+            <div class="table-container">
+
+                <table class="complaints-table">
+
+                    
+<thead>
+    <tr>
+        <th>Complaint ID</th>
+        <th>User ID</th>
+        <th>Location</th>
+        <th>Facility</th>
+        <th>Issue</th>
+        <th>Severity</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Status</th>
+    </tr>
+</thead>
+
+
+                    <tbody id="complaintsTableBody">
+
+                        <tr>
+                            <td colspan="8">
+                                Loading complaints...
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- Recurring Facility Issues -->
+        <section class="panel dashboard-panel">
+
+            <div class="panel-heading">
+                <div>
+                    <h2>🔄 Recurring Facility Issues</h2>
+
+                    <p>
+                        Frequently reported issues requiring
+                        preventive maintenance.
+                    </p>
+                </div>
+            </div>
+
+            <div id="recurringIssues">
+                Loading recurring issues...
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+    <!-- Dashboard JavaScript -->
+    <script src="dashboard.js"></script>
+
+</body>
+
+</html>
